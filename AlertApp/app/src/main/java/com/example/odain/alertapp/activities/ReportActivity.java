@@ -115,6 +115,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         submitAlertBtn.setOnClickListener(this);
     }
 
+   //Code snippet for sent alert event
     @Override
     public void onClick(View v) {
         alert= new Alert(mSharedPref.getString("AppID",null),stringLatitude,stringLongitude,items);
@@ -129,3 +130,5 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 }
+
+//=======================================================================================================
