@@ -7,7 +7,7 @@ package com.example.odain.alertapp.models;
 import com.loopj.android.http.*;
 
 public class AlertClient {
-    private static final String BASE_URL = "https://api.twitter.com/1/";
+    private static final String BASE_URL = "http://blazeapp-ninjabreadfruit2.c9users.io:8080/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 

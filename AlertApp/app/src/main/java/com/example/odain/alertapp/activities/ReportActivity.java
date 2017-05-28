@@ -16,7 +16,9 @@ import android.widget.Toast;
 import com.example.odain.alertapp.R;
 import com.example.odain.alertapp.models.Alert;
 import com.example.odain.alertapp.models.AlertClientUsage;
+import com.example.odain.alertapp.models.Session;
 import com.example.odain.alertapp.services.GPSTracker;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONObject;
 
@@ -36,9 +38,11 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
     Alert alert;
     AlertClientUsage alertClient;
     SharedPreferences mSharedPref;
-    String stringLatitude, stringLongitude;
+    String stringLatitude, stringLongitude, details;
     JSONObject resp;
     Button submitAlertBtn;
+    RequestParams params;
+    Session session;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +65,10 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         GPSTracker gpsTracker = new GPSTracker(this);
+        gpsTracker.getLatitude();
+        gpsTracker.getLongitude();
+
+        details = editText.getText().toString();
 
         if (gpsTracker.getIsGPSTrackingEnabled())
         {
@@ -117,12 +125,22 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        alert= new Alert(mSharedPref.getString("AppID",null),stringLatitude,stringLongitude,items);
+        details = editText.getText().toString();
+        params = new RequestParams();
+        session = new Session(getApplicationContext());
+        alert= new Alert(session.getID(),stringLatitude,stringLongitude,items,details);
+        params.put("id",session.getID());
+        params.put("latitude",stringLatitude);
+        params.put("longitude",stringLongitude);
+        params.put("items",items);
+        params.put("details",details);
         alertClient = new AlertClientUsage();
+
         try{
-            alertClient.sendAlert();
+            alertClient.sendAlert(params);
             resp = alertClient.getFirstEvent();
-            Toast.makeText(this,"Alert Sent", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(), "Alert Sent", Toast.LENGTH_SHORT);
+            toast.show();
         }
         catch (Exception e){
             e.printStackTrace();

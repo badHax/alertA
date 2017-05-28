@@ -1,31 +1,18 @@
 package com.example.odain.alertapp.activities;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import com.example.odain.alertapp.R;
 
-import com.example.odain.alertapp.fragments.*;
-
 import com.example.odain.alertapp.adapters.TabAdapter;
+import com.example.odain.alertapp.models.Session;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -36,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    SharedPreferences mPrefs;
+    Session session;
+    SecureRandom random = new SecureRandom();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        firstRunPreferences();
+        session = new Session(getApplicationContext());
 
-        if(!getFirstRun()){
-            setID();
-            setRunned();
+        if(!session.getRan()){
+            session.setID(new BigInteger(130, random).toString(32));
+            session.setRan(true);
         }
 
 
@@ -118,38 +106,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * get if this is the first run
-     *
-     * @return returns true, if this is the first run
-     */
-    public boolean getFirstRun() {
-        return mPrefs.getBoolean("firstRun", true);
-    }
-
-    /**
-     * store the first run
-     */
-    public void setRunned() {
-        SharedPreferences.Editor edit = mPrefs.edit();
-        edit.putBoolean("firstRun", false);
-        edit.commit();
-    }
-
-    /**
-     * setting up preferences storage
-     */
-    public void firstRunPreferences() {
-        Context mContext = this.getApplicationContext();
-        mPrefs = mContext.getSharedPreferences("myAppPrefs", 0); //0 = mode private. only this app can read these preferences
-    }
-
-    private void setID() {
-        SecureRandom random = new SecureRandom();
-        SharedPreferences.Editor edit = mPrefs.edit();
-        edit.putString("AppID", new BigInteger(130, random).toString(32));
-        edit.commit();
     }
 }
